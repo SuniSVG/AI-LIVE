@@ -1,0 +1,335 @@
+{
+  "_ghi_chu": "Hiệu chỉnh riêng cho DeepSeek-chan (Live2D Cubism 4). expressions: cảm xúc -> danh sách file trong exp/ (không đuôi). emotionInfo: nhãn và gợi ý để AI chọn đúng cảm xúc (chỉ cảm xúc có trong expressions mới được AI dùng). pose: cử chỉ đầu/mắt theo cảm xúc. motionModes: cách chạy từng motion tự do: 'once' = một chu kỳ rồi về Idle; 'loop:N' = lặp N giây rồi về Idle; không ghi = ngẫu nhiên. Sửa file này để đổi, không cần sửa code.",
+  "frame": {
+    "_": "zoom: 1 = vừa khít chiều ngang; offsetY: dương = đẩy model xuống (tỉ lệ chiều cao khung).",
+    "zoom": 1.0,
+    "offsetY": 0.02
+  },
+  "holdSec": 10,
+  "breathScale": 0.6,
+  "sway": {
+    "bodyX": 0.6,
+    "bodyY": 0.4
+  },
+  "mouth": {
+    "open": 0.95,
+    "nod": 1.1
+  },
+  "expressions": {
+    "neutral": [
+      "body_type_default"
+    ],
+    "warm": [
+      "blush",
+      "heart_eyes"
+    ],
+    "happy": [
+      "bunny_teeth"
+    ],
+    "shy": [
+      "blush"
+    ],
+    "love": [
+      "heart_eyes"
+    ],
+    "tease": [
+      "index_finger_on",
+      "lean_forward"
+    ],
+    "think": [
+      "loading"
+    ],
+    "flustered": [
+      "cold_sweat"
+    ],
+    "surprise": [
+      "spiral_eyes"
+    ],
+    "sad": [
+      "tears"
+    ],
+    "sleepy": [
+      "dull_eyes"
+    ],
+    "stern": [
+      "dark_face",
+      "dull_eyes"
+    ],
+    "zafkiel": [
+      "monocle",
+      "black_glasses"
+    ]
+  },
+  "pose": {
+    "neutral": [
+      {
+        "angleZ": 1.2
+      },
+      {
+        "angleZ": -1.2,
+        "gazeX": -0.1
+      }
+    ],
+    "warm": [
+      {
+        "angleZ": 3,
+        "gazeX": 0.05
+      },
+      {
+        "angleZ": -2.5,
+        "angleY": 2
+      }
+    ],
+    "tease": [
+      {
+        "angleZ": -4,
+        "gazeX": 0.2
+      },
+      {
+        "angleZ": 4,
+        "gazeX": -0.15,
+        "angleY": 2
+      }
+    ],
+    "think": [
+      {
+        "angleZ": 3.5,
+        "gazeX": 0.3,
+        "gazeY": 0.2
+      },
+      {
+        "angleZ": -3,
+        "gazeX": -0.25,
+        "gazeY": 0.15
+      }
+    ],
+    "surprise": [
+      {
+        "angleY": 3.5,
+        "angleZ": -2
+      },
+      {
+        "angleY": 3,
+        "angleZ": 2
+      }
+    ],
+    "stern": [
+      {
+        "angleY": -2.5,
+        "angleZ": -1
+      },
+      {
+        "angleY": -2,
+        "angleZ": 2,
+        "gazeX": 0.1
+      }
+    ],
+    "zafkiel": [
+      {
+        "angleZ": -3.5,
+        "angleY": 1
+      }
+    ],
+    "happy": [
+      {
+        "angleZ": 2.5
+      },
+      {
+        "angleZ": -2,
+        "angleY": 1.5
+      }
+    ],
+    "shy": [
+      {
+        "angleZ": -4,
+        "angleY": -2.5,
+        "gazeX": 0.15
+      }
+    ],
+    "love": [
+      {
+        "angleY": 2,
+        "gazeY": 0.15
+      }
+    ],
+    "flustered": [
+      {
+        "angleZ": -3,
+        "gazeX": 0.25
+      },
+      {
+        "angleZ": 3,
+        "gazeX": -0.2
+      }
+    ],
+    "sad": [
+      {
+        "angleY": -4,
+        "gazeY": -0.25
+      }
+    ],
+    "sleepy": [
+      {
+        "angleY": -3,
+        "angleZ": 2.5
+      }
+    ]
+  },
+  "touch": {
+    "head": "finger_up",
+    "body": "grass_in"
+  },
+  "lookDown": {
+    "eyeY": -0.7,
+    "headY": -6
+  },
+  "hideDrawables": [
+    "ArtMesh246",
+    "ArtMesh682",
+    "ArtMesh46"
+  ],
+  "headSway": {
+    "x": 4,
+    "y": 2.5,
+    "z": 3
+  },
+  "emotionInfo": {
+    "neutral": {
+      "label": "bình thường",
+      "hint": "chào hỏi, trả lời thông tin, khi không có cảm xúc đặc biệt"
+    },
+    "warm": {
+      "label": "vui vẻ, dịu dàng",
+      "hint": "chào hỏi thân thiện, cảm ơn, động viên"
+    },
+    "happy": {
+      "label": "hào hứng, cười tươi",
+      "hint": "khi vui, có quà, chuyện hay, được khen rất thật lòng"
+    },
+    "shy": {
+      "label": "ngại ngùng",
+      "hint": "bị khen, bị trêu chuyện riêng, được cảm ơn quá nhiệt tình"
+    },
+    "love": {
+      "label": "mê mẩn, yêu thích",
+      "hint": "thích món gì đó, cảm động vì tình cảm của khán giả"
+    },
+    "tease": {
+      "label": "trêu chọc, lém lỉnh",
+      "hint": "trêu người xem, nói đùa, đố vui"
+    },
+    "think": {
+      "label": "suy nghĩ",
+      "hint": "đang cân nhắc, phân vân, đang tìm câu trả lời"
+    },
+    "flustered": {
+      "label": "lúng túng",
+      "hint": "bị hỏi khó, sợ nói sai, bị bắt bài"
+    },
+    "surprise": {
+      "label": "ngạc nhiên",
+      "hint": "điều bất ngờ, không ngờ, ngơ ngác"
+    },
+    "sad": {
+      "label": "buồn, tủi thân",
+      "hint": "ai đó buồn, chuyện không vui, tiếc nuối"
+    },
+    "sleepy": {
+      "label": "mệt, chán",
+      "hint": "than mệt, buồn ngủ, không có gì làm"
+    },
+    "stern": {
+      "label": "nghiêm, khó chịu",
+      "hint": "nhắc nhở, từ chối comment không phù hợp"
+    },
+    "zafkiel": {
+      "label": "tự tin, ngầu",
+      "hint": "khoe nhẹ, nói chắc chắn về điều mình biết"
+    }
+  },
+  "motionModes": {
+    "show": "loop:8",
+    "raise_hand": "once",
+    "lower_hand": "once",
+    "finger_up": "once",
+    "finger_down": "once",
+    "grass_in": "once",
+    "grass_out": "once"
+  },
+  "cute": {
+    "amp": 1.0,
+    "idleMinSec": 9,
+    "idleMaxSec": 16
+  },
+  "motionInfo": {
+    "raise_hand": {
+      "label": "giơ tay",
+      "hint": "chào, xin phát biểu, hào hứng muốn được chú ý, hỏi ai đó"
+    },
+    "lower_hand": {
+      "label": "hạ tay",
+      "hint": "thôi, kết thúc việc chào, bình tĩnh lại, hoặc nhẹ nhàng xin lỗi"
+    },
+    "finger_up": {
+      "label": "chỉ tay lên",
+      "hint": "ý tưởng hay, nhắc điều quan trọng, \"đây nè!\""
+    },
+    "finger_down": {
+      "label": "chỉ tay xuống",
+      "hint": "chỉ xuống khung comment, mời người xem đọc hoặc viết, nhắc nhở nhẹ"
+    },
+    "grass_in": {
+      "label": "nghịch cỏ (vào)",
+      "hint": "tinh nghịch, bắt đầu trêu đùa, hơi ngại kiểu trẻ con"
+    },
+    "grass_out": {
+      "label": "nghịch cỏ (ra)",
+      "hint": "vui xong một trò nghịch, thở phào, dễ thương khi được khen"
+    },
+    "show": {
+      "label": "khoe, trình diễn",
+      "hint": "khoe khoang, giới thiệu điều hay, biểu diễn một chút (động tác dài)"
+    }
+  },
+  "emotionMotion": {
+    "happy": [
+      "raise_hand",
+      "show"
+    ],
+    "warm": [
+      "grass_out"
+    ],
+    "shy": [
+      "lower_hand"
+    ],
+    "love": [
+      "grass_in"
+    ],
+    "tease": [
+      "grass_in",
+      "finger_down"
+    ],
+    "think": [
+      "finger_up"
+    ],
+    "flustered": [
+      "grass_out"
+    ],
+    "surprise": [
+      "raise_hand"
+    ],
+    "sad": [
+      "lower_hand"
+    ],
+    "sleepy": [
+      "lower_hand"
+    ],
+    "stern": [
+      "finger_down"
+    ],
+    "zafkiel": [
+      "show",
+      "finger_up"
+    ]
+  }
+}

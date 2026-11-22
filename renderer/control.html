@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kurumi Live - Bảng điều khiển</title>
+<link rel="stylesheet" href="css/control.css">
+</head>
+<body>
+<header class="top">
+  <div>
+    <div class="kicker">KURUMI LIVE</div>
+    <h1>Bảng điều khiển</h1>
+  </div>
+  <div class="pills">
+    <span id="pillTik" class="pill">TikTok: chưa kết nối</span>
+    <span id="pillAi" class="pill">AI: —</span>
+  </div>
+</header>
+
+<main class="grid">
+  <div id="aiStatus" class="ai-status" role="status" hidden></div>
+  <div class="cols">
+    <div class="col">
+    <section class="card">
+      <h2>TikTok Live</h2>
+      <div class="row">
+        <input id="user" type="text" placeholder="@username đang live" autocomplete="off">
+        <button id="btnConnect" class="primary">Kết nối</button>
+        <button id="btnDisconnect" class="ghost">Ngắt</button>
+      </div>
+      <div class="row">
+
+      <div id="status" class="note">Chưa kết nối</div>
+    </section>
+    <section class="card">
+      <h2>Nhân vật trên sân khấu</h2>
+      <label class="fld">Chọn nhân vật
+        <select id="character"></select>
+      </label>
+      <div id="characterNote" class="note"></div>
+      <div class="note">Đổi nhân vật sẽ tải lại sân khấu (câu đang đọc được bỏ qua). Mỗi nhân vật có tính cách và câu ví dụ riêng.</div>
+      <label class="fld">Cảm ơn tim mỗi bao nhiêu tim (đếm ẩn, không hiển thị)<input id="heartStep" type="number" min="10" max="100000"></label>
+      <div class="row between">
+        <div id="formNote" class="note">Dạng: gốc.</div>
+        <button id="btnFormReset" class="ghost">Về dạng gốc</button>
+      </div>
+      <div class="note">AI tự đổi dạng (màu sắc) khi thấy hợp. Nếu nhiều người không thích, nhân vật sẽ tự về dạng cũ.</div>
+    </section>
+    <section class="card">
+      <h2>AI trả lời</h2>
+      <div class="row between">
+        <label class="switch"><input id="aiEnabled" type="checkbox"><span class="sw"></span>Bật AI trả lời</label>
+        <button id="btnPause" class="ghost">Tạm dừng</button>
+      </div>
+      <label class="fld">Model ưu tiên (tự chuyển dự phòng khi quá tải)<input id="model" type="text"></label>
+      <div class="row">
+        <label class="fld grow">API key Gemini (mỗi dòng một key, mỗi câu dùng 2 key xoay vòng)<textarea id="apiKey" class="secret" rows="3" placeholder="Dán danh sách key, mỗi dòng một key. Lưu = thay toàn bộ danh sách" autocomplete="off" spellcheck="false"></textarea></label>
+        <button id="btnKey" class="ghost">Lưu key</button>
+      </div>
+      <div id="keyNote" class="note"></div>
+    </section>
+    <section class="card">
+      <h2>Giọng đọc (VieNeu) <span id="ttsPill" class="pill">tắt</span></h2>
+      <label class="chk"><input id="voiceEnabled" type="checkbox"><span class="sw"></span>Đọc câu trả lời bằng giọng nói</label>
+      <label class="fld">Giọng<select id="voiceName"></select></label>
+      <label class="fld">Đường dẫn Python (để trống = python hệ thống)<input id="pythonPath" type="text" placeholder="vd: C:\Python311\python.exe"></label>
+      <div class="row">
+        <button id="btnVoiceTest" class="ghost">Thử giọng</button>
+      </div>
+      <div id="ttsNote" class="note">Cần Python 3.10+ và chạy: pip install vieneu</div>
+    </section>
+    <section class="card">
+      <h2>Sân khấu & thử nghiệm</h2>
+      <div class="row">
+        <button id="btnStage" class="ghost">Ẩn sân khấu</button>
+        <button id="btnClearStage" class="ghost">Xoá phụ đề</button>
+        <button id="btnDemo" class="ghost">Bật demo comment</button>
+      </div>
+      <form id="testForm" class="stack">
+        <input id="testName" type="text" placeholder="Tên viewer thử" value="Khán giả thử" autocomplete="off">
+        <div class="row">
+          <input id="testText" type="text" placeholder="Nội dung comment để thử…" autocomplete="off">
+          <button class="primary" type="submit">Gửi thử</button>
+        </div>
+      </form>
+      <div class="note">Comment thử luôn được trả lời (bỏ qua từ khoá và thời gian chờ) khi AI đang bật.</div>
+    </section>
+    </div>
+    <div class="col">
+    <section class="card">
+      <h2>Chọn comment để trả lời</h2>
+      <label class="fld">Cách chọn
+        <select id="pickMode">
+          <option value="random">Bốc ngẫu nhiên trong hàng đợi</option>
+          <option value="fifo">Theo thứ tự vào</option>
+        </select>
+      </label>
+      <label class="fld">Trả lời khi
+        <select id="triggerMode">
+          <option value="keyword">Comment có từ khoá</option>
+          <option value="all">Mọi comment</option>
+        </select>
+      </label>
+      <label class="fld">Từ khoá (ngăn cách bằng dấu phẩy)<input id="keywords" type="text"></label>
+      <div class="grid2">
+        <label class="chk"><input id="musicEnabled" type="checkbox"><span class="sw"></span>Nhạc nền trên sân khấu</label>
+        <label class="fld">Âm lượng nhạc nền (0–100%)<input id="musicVolume" type="number" min="0" max="100"></label>
+        <label class="fld">Thư mục nhạc (để trống = nhạc đi kèm app)<input id="musicDir" type="text"></label>
+        <div class="fld"><button id="musicNext" type="button">Đổi bài nhạc</button></div>
+      </div>
+      <p class="hint">Khán giả cũng có thể gõ "đổi nhạc", "tắt nhạc", "bật nhạc" trong comment. Mỗi người chỉ đổi nhạc một lần trong 15 giây.</p>
+      <div class="grid2">
+        <label class="chk"><input id="selfTalkEnabled" type="checkbox"><span class="sw"></span>Tự nói khi vắng comment</label>
+        <label class="chk"><input id="factMemory" type="checkbox"><span class="sw"></span>Nhớ và tóm tắt điều khán giả nói về họ</label>
+        <label class="fld">Im lặng bao lâu thì tự nói (giây)<input id="selfIdleSec" type="number" min="10" max="600"></label>
+        <label class="fld">Cách nhau giữa 2 lần tự nói (giây)<input id="selfMinGapSec" type="number" min="10" max="3600"></label>
+        <label class="fld">Tối đa lần tự nói mỗi giờ<input id="selfMaxPerHour" type="number" min="1" max="200"></label>
+        <label class="fld">Tự tóm tắt live sau mỗi (phút, 0 = tắt)<input id="recapEveryMin" type="number" min="0" max="240"></label>
+        <label class="chk"><input id="selfQuietBoost" type="checkbox"><span class="sw"></span>Tự nói nhiều hơn khi vắng người xem / comment</label>
+        <label class="fld">Vắng nếu ít hơn bấy nhiêu người xem<input id="selfQuietViewers" type="number" min="0" max="100000"></label>
+        <label class="fld">Vắng nếu ít hơn bấy nhiêu comment mỗi phút<input id="selfQuietCommentsPerMin" type="number" min="0" max="1000"></label>
+      </div>
+      <label class="chk"><input id="replyToGifts" type="checkbox"><span class="sw"></span>Cảm ơn quà tặng</label>
+      <label class="chk"><input id="quickReplies" type="checkbox"><span class="sw"></span>Trả lời nhanh lời chào và quà bằng câu có sẵn (không chờ AI)</label>
+      <div class="grid2">
+        <label class="fld">Quà tối thiểu (kim cương)<input id="giftMinDiamonds" type="number" min="1"></label>
+        <label class="fld">Chờ giữa 2 lần của một người (giây)<input id="cooldownUserSec" type="number" min="0"></label>
+        <label class="fld">Khoảng cách giữa 2 câu (giây)<input id="minIntervalSec" type="number" min="0"></label>
+        <label class="fld">Hàng đợi tối đa<input id="maxQueue" type="number" min="1"></label>
+        <label class="fld">Số câu gọi AI cùng lúc (1-3)<input id="parallel" type="number" min="1" max="3"></label>
+        <label class="fld">Hiện phụ đề tối thiểu (giây)<input id="subtitleSec" type="number" min="2"></label>
+        <label class="fld">Ngôn ngữ trả lời
+          <select id="locale">
+            <option value="vi">Tiếng Việt</option>
+            <option value="en">English</option>
+            <option value="ja">日本語</option>
+          </select>
+        </label>
+        <label class="fld">Nền sân khấu
+          <select id="stageBg">
+            <option value="dark">Tối (mặc định)</option>
+            <option value="green">Xanh lá (key OBS)</option>
+          </select>
+        </label>
+        <label class="fld">Cảnh phía sau nhân vật
+          <select id="scene">
+            <option value="thien-cung">Thiên cung giữa biển mây</option>
+            <option value="none">Nền tối (không cảnh)</option>
+          </select>
+        </label>
+      </div>
+      <label class="chk"><input id="freeMotion" type="checkbox"><span class="sw"></span>Nhân vật tự chơi chuyển động khi rảnh và theo câu trả lời (cần file motion trong models/deepseek/motions)</label>
+      <label class="fld">Mô hình dự phòng thêm (cách nhau bằng dấu phẩy, thử sau mô hình chính)<input id="extraModels" type="text" placeholder="vd: gemini-1.5-flash"></label>
+      <label class="chk"><input id="cannedFallback" type="checkbox"><span class="sw"></span>Khi mọi mô hình lỗi, trả lời bằng câu mẫu (viewer vẫn được đáp)</label>
+      <label class="fld">Tính cách của <span id="personaName">nhân vật</span> (để nguyên = mặc định)<textarea id="persona" rows="4"></textarea></label>
+      <div class="row end"><button id="btnSave" class="primary">Lưu cài đặt</button></div>
+    </section>
+    </div>
+    <div class="col">
+    <section class="card">
+      <h2>Hàng đợi <span id="qCount" class="count">0</span></h2>
+      <div class="row">
+        <button id="btnPickRandom" class="primary">Bốc ngẫu nhiên 1</button>
+        <button id="btnClearQ" class="ghost danger">Xoá hàng đợi</button>
+      </div>
+      <ol id="queue" class="list"></ol>
+    </section>
+    <section class="card" id="videoCard">
+      <h2>Video quà tặng <span id="vCount" class="count">0</span></h2>
+      <label class="chk"><input id="videoEnabled" type="checkbox"><span class="sw"></span>Phát video khi có quà đúng trong bảng quà → video</label>
+      <div class="grid2">
+        <label class="fld">Âm lượng video (0–100)<input id="videoVolume" type="number" min="0" max="100"></label>
+        <label class="fld">Số video chờ tối đa (quá thì bỏ video cũ nhất)<input id="maxVideoQueue" type="number" min="1" max="100"></label>
+        <label class="fld">Nghỉ giữa 2 video (giây)<input id="videoGapSec" type="number" min="0" max="60"></label>
+      </div>
+      <label class="chk"><input id="videoBreakTalk" type="checkbox"><span class="sw"></span>Nhân vật nói sau mỗi video: than mệt, rồi "tiếp tục nào" trước video kế</label>
+      <div id="vNow" class="note">Chưa có video nào đang phát.</div>
+      <div class="row">
+        <button id="btnVSkip" class="ghost">Bỏ qua video đang phát</button>
+        <button id="btnVClear" class="ghost danger">Xoá hàng đợi video</button>
+      </div>
+      <ol id="vQueue" class="list"></ol>
+
+      <h2>Bảng quà → video</h2>
+      <div class="note">Tên quà phải đúng như TikTok hiển thị (không phân biệt hoa thường). Dùng <b>*</b> để một video cho mọi quà không có trong bảng. Sửa xong bấm <b>Lưu bảng</b> trước khi bấm Phát thử.</div>
+      <datalist id="giftList"></datalist>
+      <div id="vTable" class="vtable"></div>
+      <div class="row">
+        <button id="btnVAdd" class="ghost">+ Thêm dòng</button>
+        <button id="btnVSave" class="primary">Lưu bảng</button>
+      </div>
+      <div id="vNote" class="note"></div>
+
+      <h2>Lịch sử video</h2>
+      <div id="vHist" class="feed"></div>
+    </section>
+    </div>
+  </div>
+    <section class="card wide">
+      <h2>Bảng comment <span id="bCount" class="count">0</span></h2>
+      <div id="board" class="board"></div>
+    </section>
+    <section class="card wide">
+      <h2>Nhật ký quyết định</h2>
+      <div id="stats" class="note"></div>
+      <div id="feed" class="feed"></div>
+    </section>
+</main>
+
+<div id="toast" class="toast" hidden></div>
+<script src="js/voices.js"></script>
+<script src="js/control.js"></script>
+</body>
+</html>

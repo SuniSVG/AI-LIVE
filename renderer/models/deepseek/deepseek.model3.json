@@ -1,0 +1,27 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "deepseek.moc3",
+		"Textures": [
+			"deepseek.4096/texture_00.png",
+			"deepseek.4096/texture_01.png",
+			"deepseek.4096/texture_02.png",
+			"deepseek.4096/texture_03.png",
+			"deepseek.4096/texture_04.png"
+		],
+		"Physics": "deepseek.physics3.json",
+		"DisplayInfo": "deepseek.cdi3.json"
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": ["ParamEyeROpen", "ParamEyeLOpen"]
+		},
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		}
+	]
+}

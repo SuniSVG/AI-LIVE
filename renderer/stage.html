@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DeepSeek-chan</title>
+<style>
+:root{--ink:#f3e9e6;--muted:#a79a9c;--accent:#ff5b7b;--gold:#c9a46a;--panel:rgba(20,12,16,.84);--line:rgba(255,255,255,.09)}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  background:radial-gradient(ellipse at 50% 35%,#3a0f1c 0%,#140a0e 45%,#060405 100%);
+  color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,sans-serif;overflow:hidden
+}
+body.key-green{background:#00b140}
+/* nền cảnh: ảnh phía sau nhân vật, phủ một lớp tối nhẹ để phụ đề và bảng comment dễ đọc */
+body.has-scene{background:var(--scene) center/cover no-repeat #0b0709}
+body.has-scene::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:linear-gradient(180deg,rgba(10,6,8,.12) 0%,rgba(10,6,8,.2) 55%,rgba(10,6,8,.55) 100%)}
+#stage{z-index:1}
+#stage{position:fixed;inset:0;display:flex;flex-direction:column;padding:16px 16px 22px}
+.portrait{position:relative;flex:1;min-height:0}
+#live2dCanvas{position:absolute;inset:0;width:100%;height:100%;
+  -webkit-mask-image:linear-gradient(to bottom,#000 calc(var(--fade-end,100%) - var(--fade-len,0px)),transparent var(--fade-end,100%));
+  mask-image:linear-gradient(to bottom,#000 calc(var(--fade-end,100%) - var(--fade-len,0px)),transparent var(--fade-end,100%))}
+#avatar{position:absolute;inset:0;margin:auto;max-width:100%;max-height:100%;object-fit:contain}
+.model-notice{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:var(--muted);margin:0;text-align:center}
+.model-notice.failed{color:#ffb3c1}
+.live2d-ready .model-notice{display:none}
+.idle-label{position:absolute;left:0;top:0;margin:0;font-size:13px;color:var(--muted);letter-spacing:.08em}
+
+.zafkiel-clock{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .6s}
+#portrait[data-action="zafkiel"] .zafkiel-clock{opacity:1}
+.clock-hour{position:absolute;left:50%;top:50%;margin:0;font-size:13px;color:rgba(201,164,106,.55);
+  transform:translate(-50%,-50%) rotate(var(--a)) translateY(-min(38vh,38vw)) rotate(calc(-1 * var(--a)))}
+.hour-0{--a:0deg}.hour-1{--a:30deg}.hour-2{--a:60deg}.hour-3{--a:90deg}.hour-4{--a:120deg}.hour-5{--a:150deg}
+.hour-6{--a:180deg}.hour-7{--a:210deg}.hour-8{--a:240deg}.hour-9{--a:270deg}.hour-10{--a:300deg}.hour-11{--a:330deg}
+
+.board{
+  height:200px;margin-top:10px;display:flex;flex-direction:column;justify-content:flex-end;gap:5px;overflow:hidden
+}
+.board[hidden]{display:none}
+.brow{
+  background:rgba(20,12,16,.72);border:1px solid transparent;border-radius:10px;padding:5px 11px;
+  font-size:14px;line-height:1.35;overflow-wrap:anywhere;animation:brow-in .35s ease-out
+}
+.brow .bname{color:var(--gold);font-weight:600;margin-right:6px}
+.brow.gift{color:#ffd9a0}
+.brow.on{border-color:var(--accent);background:rgba(60,14,26,.8)}
+.brow.reading{border-color:var(--gold);box-shadow:0 0 0 1px rgba(201,164,106,.45) inset}
+@keyframes brow-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.subtitle{
+  margin:10px auto 0;max-width:620px;width:100%;background:var(--panel);
+  border:1px solid var(--line);border-radius:14px;padding:14px 22px;text-align:center;
+  opacity:0;transform:translateY(8px);transition:opacity .35s,transform .35s
+}
+.subtitle.show{opacity:1;transform:none}
+.sub-name{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin:0 0 6px;min-height:1em}
+.sub-text{font-size:19px;font-weight:600;margin:0;line-height:1.45;overflow-wrap:anywhere}
+
+/* video quà tặng: phủ lên khu vực nhân vật; bảng comment và phụ đề vẫn hiện bên dưới */
+.video-box{position:absolute;inset:0;z-index:5;background:#000;border-radius:14px;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 1px var(--line)}
+.video-box[hidden]{display:none}
+/* hiệu ứng quà: icon bùng nổ từ giữa nhân vật, bay ra rồi mờ dần trong 5 giây */
+.fx-layer{position:fixed;inset:0;pointer-events:none;z-index:8;overflow:hidden}
+.fx-layer[hidden]{display:none}
+.fx-hero,.fx-ic{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%) scale(0);opacity:0}
+.fx-hero{width:260px;animation:fxHero var(--dur) ease-out forwards}
+.fx-ic{width:var(--sz);animation:fxBurst var(--dur) cubic-bezier(.2,.8,.3,1) var(--delay) forwards}
+@keyframes fxHero{
+  0%{transform:translate(-50%,-50%) scale(0) rotate(-20deg);opacity:1}
+  10%{transform:translate(-50%,-50%) scale(1.25) rotate(8deg);opacity:1}
+  16%{transform:translate(-50%,-50%) scale(1) rotate(0);opacity:1}
+  85%{transform:translate(-50%,-50%) scale(1) rotate(0);opacity:1}
+  100%{transform:translate(-50%,-60%) scale(1.15);opacity:0}
+}
+@keyframes fxBurst{
+  0%{transform:translate(-50%,-50%) scale(0) rotate(0);opacity:1}
+  25%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.1) rotate(var(--rot));opacity:1}
+  75%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy) - 30px)) scale(1) rotate(var(--rot));opacity:1}
+  100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy) - 60px)) scale(.8) rotate(var(--rot));opacity:0}
+}
+.video-box video{width:100%;height:100%;object-fit:contain;background:#000}
+.vid-cap{position:absolute;left:12px;top:12px;right:12px;margin:0;font-size:14px;font-weight:600;
+  color:#ffd9a0;background:rgba(10,6,8,.72);padding:4px 12px;border-radius:999px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+</style>
+</head>
+<body>
+<main id="stage">
+  <div id="portrait" class="portrait">
+    <canvas id="live2dCanvas" hidden></canvas>
+    <img id="avatar" alt="" hidden>
+    <p id="modelNotice" class="model-notice">Đang tải nhân vật…</p>
+    <p id="idleLabel" class="idle-label">Đang chờ comment…</p>
+    <div id="fxLayer" class="fx-layer" hidden></div>
+    <div id="videoBox" class="video-box" hidden>
+      <video id="vid" playsinline></video>
+      <p id="vidCap" class="vid-cap"></p>
+    </div>
+  </div>
+  <div id="subtitle" class="subtitle" aria-live="polite">
+    <p id="subName" class="sub-name"></p>
+    <p id="subText" class="sub-text"></p>
+  </div>
+</main>
+
+<!-- PixiJS dùng chung cho mọi nhân vật. Runtime Live2D và renderer lưới được tải theo nhân vật đang chọn (stage.js). -->
+<script src="vendor/pixi.min.js"></script>
+<script src="js/bgm-logic.js"></script>
+<script src="js/bgm.js"></script>
+<script src="js/stage.js"></script>
+</body>
+</html>

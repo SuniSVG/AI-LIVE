@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Một khoảng riêng để gặp gỡ và trò chuyện cùng Kurumi.">
+<title>Kurumi</title>
+<style>
+:root{
+  --bg:#0b0709; --ink:#f3e9e6; --muted:#a79a9c; --accent:#ff5b7b;
+  --gold:#c9a46a; --panel:rgba(20,12,16,.84); --line:rgba(255,255,255,.09);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  background:radial-gradient(ellipse at 50% 35%,#3a0f1c 0%,#140a0e 45%,#060405 100%);
+  color:var(--ink);font:15px/1.6 "Segoe UI",system-ui,sans-serif;overflow:hidden
+}
+button,input,textarea,select{font:inherit;color:inherit}
+[hidden]{display:none!important}
+em{color:var(--accent);font-style:italic}
+.serif{font-family:"Cormorant Garamond","Iowan Old Style",Georgia,serif;font-weight:500}
+.kicker{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin:0}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row.end{justify-content:flex-end;margin-top:14px}
+
+button{
+  cursor:pointer;border-radius:999px;padding:9px 18px;border:1px solid var(--line);
+  background:rgba(255,255,255,.04);transition:.2s
+}
+button:hover:not(:disabled){border-color:var(--accent)}
+button:disabled{opacity:.4;cursor:default}
+.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.ghost.danger{color:#ff8a9c}
+.icon{width:38px;height:38px;padding:0;font-size:20px}
+select{background:transparent;border:1px solid var(--line);border-radius:999px;padding:4px 10px}
+select option{background:#1a1014}
+
+/* Màn mở đầu */
+#entrance{
+  position:fixed;inset:0;z-index:20;display:grid;place-items:center;text-align:center;
+  background:rgba(6,4,5,.86);backdrop-filter:blur(4px)
+}
+.entrance-card{max-width:520px;padding:40px}
+.entrance-card h1{font-size:44px;line-height:1.1;margin:12px 0 16px}
+.entrance-card p{margin:10px 0}
+
+/* Phòng */
+#room{
+  position:fixed;inset:0;padding:22px 28px;display:grid;gap:18px 28px;
+  grid-template-columns:minmax(0,1fr) 340px;grid-template-rows:auto minmax(0,1fr)
+}
+.topbar{grid-column:1/-1;display:flex;justify-content:space-between;align-items:flex-end}
+.topbar h2{font-size:34px;margin:4px 0 0;font-weight:500}
+.top-right{display:flex;gap:14px;align-items:center}
+.status{font-size:12px;color:var(--muted)}
+.status.connected{color:#8fd19e}
+.timer{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px}
+
+.stage{position:relative;min-height:0;display:flex;flex-direction:column}
+.portrait{position:relative;flex:1;min-height:0}
+.portrait::before{
+  content:"";position:absolute;inset:3% 6%;border:1px solid rgba(201,164,106,.35);
+  border-radius:50%;pointer-events:none
+}
+#live2dCanvas{position:absolute;inset:0;width:100%;height:100%}
+#avatar{position:absolute;inset:0;margin:auto;max-width:100%;max-height:100%;object-fit:contain}
+.model-notice{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:var(--muted);margin:0;text-align:center}
+.model-notice.ready{opacity:0;transition:opacity 1.5s}
+.model-notice.failed{color:#ffb3c1}
+.voice-label{position:absolute;left:0;top:4px;margin:0;font-size:13px;color:var(--muted)}
+.wave{
+  position:absolute;bottom:0;left:50%;width:240px;height:2px;transform:translateX(-50%);
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:.3s
+}
+.wave.active{opacity:1}
+.vertical-text{
+  position:absolute;right:0;top:28%;margin:0;writing-mode:vertical-rl;
+  color:var(--muted);letter-spacing:.4em;font-size:14px
+}
+.portrait-actions{position:absolute;left:0;bottom:8px;display:flex;gap:8px}
+
+.zafkiel-clock{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .6s}
+#portrait[data-action="zafkiel"] .zafkiel-clock{opacity:1}
+.clock-hour{position:absolute;left:50%;top:50%;margin:0;font-size:13px;color:rgba(201,164,106,.55);
+  transform:translate(-50%,-50%) rotate(var(--a)) translateY(-min(38vh,38vw)) rotate(calc(-1 * var(--a)))}
+.hour-0{--a:0deg}
+.hour-1{--a:30deg}
+.hour-2{--a:60deg}
+.hour-3{--a:90deg}
+.hour-4{--a:120deg}
+.hour-5{--a:150deg}
+.hour-6{--a:180deg}
+.hour-7{--a:210deg}
+.hour-8{--a:240deg}
+.hour-9{--a:270deg}
+.hour-10{--a:300deg}
+.hour-11{--a:330deg}
+.live2d-ready .model-notice{display:none}
+.subtitle-card{
+  margin:10px auto 0;max-width:620px;width:100%;background:var(--panel);
+  border:1px solid var(--line);border-radius:14px;padding:14px 22px;text-align:center
+}
+.sub-ja{color:var(--muted);font-size:14px;margin:0 0 6px;min-height:1.2em}
+.sub-vi{font-size:17px;font-weight:600;margin:0}
+
+/* Khung bên phải */
+.side{
+  min-height:0;display:flex;flex-direction:column;gap:12px;
+  background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px
+}
+.controls{display:flex;flex-direction:column;gap:10px}
+.check{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted);margin:4px 0}
+.notice{font-size:13px;padding:8px 12px;border-radius:10px;background:rgba(255,91,123,.12);color:#ffb3c1}
+.messages{flex:1;min-height:0;overflow:auto;padding-right:4px}
+.message{margin:8px 0;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.03)}
+.message.user{border-left:2px solid var(--gold)}
+.message.assistant{border-left:2px solid var(--accent)}
+.sender{font-size:10px;letter-spacing:.2em;color:var(--gold)}
+.body{white-space:pre-line}
+.message img,.message video{max-width:100%;border-radius:8px;margin-top:6px;display:block}
+
+.composer{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#chatInput{
+  flex:1;min-width:0;background:rgba(0,0,0,.3);border:1px solid var(--line);
+  border-radius:999px;padding:10px 16px;outline:none
+}
+#chatInput:focus{border-color:var(--accent)}
+.attach-wrap{position:relative}
+.attach-menu{
+  position:absolute;bottom:46px;left:0;z-index:5;display:flex;flex-direction:column;gap:4px;
+  background:#1a1014;border:1px solid var(--line);border-radius:12px;padding:6px;min-width:150px
+}
+.attach-menu button{border:0;border-radius:8px;text-align:left}
+.attach-preview{width:100%;display:flex;gap:8px;align-items:center;font-size:12px}
+.attach-preview img,.attach-preview video{width:48px;height:48px;object-fit:cover;border-radius:8px}
+
+dialog{
+  background:#1a1014;color:var(--ink);border:1px solid var(--line);border-radius:18px;
+  padding:24px;width:min(460px,92vw)
+}
+dialog::backdrop{background:rgba(0,0,0,.6)}
+dialog h3{margin:0 0 6px;font-size:26px;font-weight:500}
+dialog label{display:grid;gap:6px;margin:12px 0;font-size:13px;color:var(--muted)}
+dialog input,dialog textarea{
+  background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;padding:8px 10px;color:var(--ink)
+}
+
+@media (max-width:860px){
+  body{overflow:auto}
+  #room{position:static;min-height:100vh;grid-template-columns:1fr;grid-template-rows:auto auto auto}
+  .stage{height:70vh}
+  .side{height:70vh}
+}
+</style>
+</head>
+<body class="at-entrance">
+
+<section id="entrance">
+  <div class="entrance-card">
+    <p class="kicker">RENDEZVOUS · III</p>
+    <h1 class="serif">Bạn có muốn <em>hẹn hò với</em> Kurumi <span>không?</span></h1>
+    <p class="muted">Giữa những nhịp thời gian, một khoảnh khắc chỉ dành cho chúng mình.</p>
+    <p><button id="enterButton" class="primary">Bắt đầu cuộc hẹn</button></p>
+    <p class="muted small">Nhạc sẽ bắt đầu khi bạn bước vào.</p>
+  </div>
+</section>
+
+<main id="room" inert>
+  <header class="topbar">
+    <div>
+      <p class="kicker">RENDEZVOUS · III</p>
+      <h2 class="serif">Một cuộc hẹn <em>ngoài thời gian.</em></h2>
+    </div>
+    <div class="top-right">
+      <span id="connectionStatus" class="status">Chưa kết nối</span>
+      <span id="timer" class="timer">00:00</span>
+      <select id="languageSelect" aria-label="Ngôn ngữ">
+        <option value="vi">Tiếng Việt</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+  </header>
+
+  <section class="stage">
+    <div id="portrait" class="portrait">
+      <canvas id="live2dCanvas" hidden></canvas>
+      <img id="avatar" alt="Kurumi trong trang phục đỏ đen" hidden>
+      <p id="modelNotice" class="model-notice">Kurumi đang đến…</p>
+      <p id="voiceLabel" class="voice-label">Mình ở đây</p>
+      <span id="wave" class="wave"></span>
+      <p class="vertical-text" aria-hidden="true">刻々と、あなたと。</p>
+      <div class="portrait-actions">
+        <button id="resumeAudio" class="ghost" hidden>Chạm để nghe</button>
+        <button id="interruptButton" class="ghost" hidden>Ngắt lời</button>
+      </div>
+    </div>
+    <div class="subtitle-card">
+      <p id="subtitleJa" class="sub-ja"></p>
+      <p id="subtitleVi" class="sub-vi" lang="vi">Một khoảnh khắc dành riêng cho bạn.</p>
+    </div>
+  </section>
+
+  <aside class="side">
+    <div class="controls">
+      <button id="connectButton" class="primary"><span id="connectLabel">Bắt đầu trò chuyện</span></button>
+      <div class="row">
+        <button id="micButton" class="ghost" aria-pressed="false" data-state="off">
+          <span id="micText">Micro</span>
+        </button>
+        <button id="musicButton" class="ghost" aria-pressed="false">Nhạc nền</button>
+        <button id="memoryButton" class="ghost">Kỷ niệm của mình</button>
+      </div>
+      <p id="micHint" class="muted small">Bật micro hoặc nhập tin nhắn.</p>
+      <label class="check"><input type="checkbox" id="proactive" checked> Kurumi chủ động bắt chuyện</label>
+    </div>
+
+    <div id="notice" class="notice" hidden></div>
+
+    <div id="messages" class="messages">
+      <p id="emptyChat" class="muted small">Chưa có tin nhắn nào.</p>
+    </div>
+
+    <form id="chatForm" class="composer">
+      <div id="attachmentPreview" class="attach-preview" hidden></div>
+      <div class="attach-wrap">
+        <button type="button" id="attachButton" class="ghost icon" aria-expanded="false"
+                aria-label="Đính kèm ảnh hoặc video">+</button>
+        <div id="attachmentMenu" class="attach-menu" hidden>
+          <button type="button" id="chooseImage">Gửi ảnh</button>
+          <button type="button" id="chooseVideo">Gửi video</button>
+        </div>
+        <input id="attachmentInput" type="file" hidden>
+      </div>
+      <input id="chatInput" type="text" placeholder="Nhắn gì đó với Kurumi…" autocomplete="off" disabled>
+      <button id="sendButton" type="submit" class="primary" disabled>Gửi</button>
+    </form>
+  </aside>
+</main>
+
+<dialog id="memoryDialog">
+  <h3 class="serif">Kỷ niệm của mình</h3>
+  <p class="muted small">Kurumi ghi nhớ tên và sở thích bạn nói rõ trong cuộc trò chuyện. Bạn có thể sửa hoặc xóa bất cứ lúc nào.</p>
+  <label>Tên bạn <input id="memoryName" maxlength="60"></label>
+  <label>Sở thích <textarea id="memoryLikes" maxlength="300" rows="3"></textarea></label>
+  <div class="row">
+    <button type="button" id="clearMemory" class="ghost danger">Xóa bộ nhớ và lịch sử</button>
+    <button type="button" id="forgetMedia" class="ghost">Xóa ảnh/video đã chọn</button>
+  </div>
+  <div class="row end">
+    <button type="button" id="closeMemory" class="ghost">Đóng</button>
+    <button type="button" id="saveMemory" class="primary">Lưu</button>
+  </div>
+</dialog>
+
+<audio id="remoteAudio" preload="none"></audio>
+
+<!-- Thư viện Live2D: đặt vào renderer/vendor (xem README). Thiếu file thì app vẫn chạy. -->
+<script src="vendor/pixi.min.js"></script>
+<script src="vendor/live2d.min.js"></script>
+<script src="vendor/pixi-live2d.min.js"></script>
+<script src="js/avatar.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

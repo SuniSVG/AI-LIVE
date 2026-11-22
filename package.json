@@ -1,0 +1,46 @@
+{
+  "name": "kurumi-live",
+  "version": "3.5.0",
+  "description": "Nhân vật Live2D đọc comment TikTok Live, có trí nhớ khán giả, tâm trạng và tự tương tác khi vắng comment (Gemini)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/nojump.test.js test/engine.test.js test/settings.test.js test/characters.test.js test/instant.test.js test/motions.test.js test/dedupe.test.js test/hedge.test.js test/keypool.test.js test/giftvideo.test.js test/videoqueue.test.js test/formvote.test.js test/hearts.test.js test/cubism4.test.js test/emotions.test.js test/voices.test.js test/videogate.test.js test/cute.test.js test/motionpick.test.js test/giftfx.test.js test/autonomy.test.js test/memory.test.js test/mood.test.js test/prompt-v3.test.js test/v31.test.js test/summarize.test.js test/bgm.test.js",
+    "dist": "electron-builder --win"
+  },
+  "dependencies": {
+    "@google/genai": "^2.32.0",
+    "tiktok-live-connector": "2.5.0"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "build": {
+    "appId": "com.kurumi.live",
+    "productName": "Kurumi Live",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "asarUnpack": [
+      "tts/**"
+    ]
+  }
+}
