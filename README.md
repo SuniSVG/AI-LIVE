@@ -230,17 +230,4 @@ Các test chỉ kiểm tra phần logic (bảng comment, bốc ngẫu nhiên, co
 
 
 
-<iframe
-  src="https://chodev.pro/embed/badge/mo-hinh-ai-live-tu-tra-loi?theme=light"
-  width="250"
-  height="54"
-  frameborder="0"
-  scrolling="no"
-  loading="lazy"
-  referrerpolicy="origin"
-  allowtransparency="true"
-  style="border:none; overflow:hidden; border-radius:14px; background:transparent;"
-  title="Featured on Chợ Dev"
->
-  <a href="https://chodev.pro/p/mo-hinh-ai-live-tu-tra-loi" target="_blank" rel="noopener">Featured on Chợ Dev</a>
-</iframe>
+[![Featured on Chợ Dev](https://chodev.pro/api/badges/mo-hinh-ai-live-tu-tra-loi?theme=dark)](https://chodev.pro/p/mo-hinh-ai-live-tu-tra-loi)
