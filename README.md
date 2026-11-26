@@ -227,3 +227,20 @@ Các test chỉ kiểm tra phần logic (bảng comment, bốc ngẫu nhiên, co
 - **Chuyển động tự do (v1.9.0):** mọi nhóm motion không phải `idle` đều thuộc kho motion của DeepSeek-chan. Khi rảnh (không đọc câu nào), cứ 9–20 giây nhân vật chơi ngẫu nhiên một motion, không lặp lại nhóm vừa chạy. Khi trả lời, AI có thể kèm `[motion:TÊN]` để chọn đúng motion hợp với câu nói; tên không có thật thì bỏ qua. Tắt bằng ô **Kurumi tự chơi chuyển động** trong bảng điều khiển. Khi bật chế độ giảm chuyển động của hệ điều hành, các chuyển động này không chạy.
 - **Chuyển động tự nhiên:** Nhân vật luôn thở nhẹ và lắc thân nhẹ (tham số `PARAM_BREATH`, `PARAM_BODY_ANGLE_X/Y`), cộng dồn lên motion đang chạy nên không đè lên motion. Các chuyển động này do `renderer/js/motion-director.js` điều khiển.
 - **Nền sân khấu:** chọn "Cảnh phía sau nhân vật" trong bảng điều khiển. Khi bật nền xanh để key OBS thì không vẽ cảnh. Ảnh nền nằm ở `renderer/backgrounds/`.
+
+
+
+<iframe
+  src="https://chodev.pro/embed/badge/mo-hinh-ai-live-tu-tra-loi?theme=light"
+  width="250"
+  height="54"
+  frameborder="0"
+  scrolling="no"
+  loading="lazy"
+  referrerpolicy="origin"
+  allowtransparency="true"
+  style="border:none; overflow:hidden; border-radius:14px; background:transparent;"
+  title="Featured on Chợ Dev"
+>
+  <a href="https://chodev.pro/p/mo-hinh-ai-live-tu-tra-loi" target="_blank" rel="noopener">Featured on Chợ Dev</a>
+</iframe>
